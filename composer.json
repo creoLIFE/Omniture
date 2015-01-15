@@ -4,7 +4,7 @@
     "description": "omniture Libraries",
     "keywords": ["Adobe", "Omniture", "Omniture libraries"],
     "time":"2015-01-14",
-    "version":"1.0.2",
+    "version":"1.0.3",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "repositories": [
@@ -14,6 +14,6 @@
         }
     ],
     "autoload": {
-        "classmap": ["vendor/creoLIFE/Omniture/MeasurementLibrary/OmnitureMeasurement.class.php"]
+        "classmap": ["MeasurementLibrary/OmnitureMeasurement.class.php"]
     }
 }
