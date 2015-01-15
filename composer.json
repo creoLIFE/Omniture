@@ -14,6 +14,6 @@
         }
     ],
     "autoload": {
-        "files": ["MeasurementLibrary/OmnitureMeasurement.class.php"]
+        "classmap": ["vendor/creoLIFE/Omniture/MeasurementLibrary/OmnitureMeasurement.class.php"]
     }
 }
