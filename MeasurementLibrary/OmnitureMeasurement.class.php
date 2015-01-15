@@ -650,6 +650,11 @@ class OmnitureMeasurement
 
 	private function getQueryString()
 	{
+        //fixes
+        $varFilter = '';
+        $eventFilter = '';
+        //fixes
+
 		$s =& $this;
 
 		// initialize query string - when sending from server or managing visitor ID, turn off mod_stats cookie handshake
@@ -674,112 +679,117 @@ class OmnitureMeasurement
 		}
 
 		// go through all account variables and add to query string
-		foreach ($s->accountVarList as $varKey) {
-			$varValue = $s->getAccountVar($varKey);
+        //fixes
+        if( is_array($s->accountVarList) ){
+        //fixes
+    		foreach ($s->accountVarList as $varKey) {
+    			$varValue = $s->getAccountVar($varKey);
 
-			if (strlen($varKey) > 4) {
-				$varPrefix = substr($varKey, 0, 4);
-				$varSuffix = substr($varKey, 4);
-			} else {
-				$varPrefix = '';
-				$varSuffix = '';
-			}
+    			if (strlen($varKey) > 4) {
+    				$varPrefix = substr($varKey, 0, 4);
+    				$varSuffix = substr($varKey, 4);
+    			} else {
+    				$varPrefix = '';
+    				$varSuffix = '';
+    			}
 
-			if ($s->isSetString($varValue)) {
+    			if ($s->isSetString($varValue)) {
 
-				// check for key in var filter
-				if ($s->isSetString($varFilter) && strpos($varFilter, ",$varKey,") === false) {
-					continue;	// var key is filtered out
-				}
+    				// check for key in var filter
+    				if ($s->isSetString($varFilter) && strpos($varFilter, ",$varKey,") === false) {
+    					continue;	// var key is filtered out
+    				}
 
-				// key transformation (and applying event filters, etc.)
-				if ($varKey == "dynamicVariablePrefix") {
-					$varKey = "D";
-				} else if ($varKey == "visitorID") {
-					$varKey = "vid";
-				} else if ($varKey == "pageURL") {
-					$varKey = "g";
-					$varValue = substr($varValue, 0, 255);
-				} else if ($varKey == "referrer") {
-					$varKey = "r";
-					$varValue = substr($varValue, 0, 255);
-				} else if ($varKey == "vmk" || $varKey == "visitorMigrationKey") {
-					$varKey = "vmt";
-				} else if ($varKey == "visitorMigrationServer") {
-					$varKey = "vmf";
-					if ($s->ssl && $s->visitorMigrationServerSecure) {
-						$varValue = "";
-					}
-				} else if ($varKey == "visitorMigrationServerSecure") {
-					$varKey = "vmf";
-					if (!$s->ssl && $s->visitorMigrationServer) {
-						$varValue = "";
-					}
-				} else if ($varKey == "timestamp") {
-					$varKey = "ts";
-				} else if ($varKey == "pageName") {
-					$varKey = "gn";
-				} else if ($varKey == "pageType") {
-					$varKey = "gt";
-				} else if ($varKey == "products") {
-					$varKey = "pl";
-				} else if ($varKey == "purchaseID") {
-					$varKey = "pi";
-				} else if ($varKey == "server") {
-					$varKey = "sv";
-				} else if ($varKey == "charSet") {
-					$varKey = "ce";
-				} else if ($varKey == "visitorNamespace") {
-					$varKey = "ns";
-				} else if ($varKey == "cookieDomainPeriods") {
-					$varKey = "cdp";
-				} else if ($varKey == "cookieLifetime") {
-					if ($ignoreCookieLifetime) {	// ignore cookie lifetime when overridden above
-						continue;
-					}
-					$varKey = "cl";
-				} else if ($varKey == "currencyCode") {
-					$varKey = "cc";
-				} else if ($varKey == "channel") {
-					$varKey = "ch";
-				} else if ($varKey == "transactionID") {
-					$varKey = "xact";
-				} else if ($varKey == "campaign") {
-					$varKey = "v0";
-				} else if ($varKey == "events") {
-					$varKey = "ev";
-					
-					// filter events if needed
-					if ($s->isSetString($eventFilter)) {
-						$varValueParts = explode(',', $varValue);
-						$validEvents = '';
-						foreach ($varValueParts as $varValuePart) {
-							if (strpos($eventFilter, ",$varValuePart,") !== false) {
-								$validEvents .= ($s->isSetString($validEvents) ? ',' : '') . $varValuePart;
-							}
-						}
-						$varValue = $validEvents;
-					}
-				} else if ($s->isNumber($varSuffix)) {
-					if ($varPrefix == "prop") {
-						$varKey = "c$varSuffix";
-					} else if ($varPrefix == "eVar") {
-						$varKey = "v$varSuffix";
-					} else if ($varPrefix == "list") {
-						$varKey = "l$varSuffix";
-					} else if ($varPrefix == "hier") {
-						$varKey = "h$varSuffix";
-						$varValue = substr($varValue, 0, 255);
-					}
-				}
+    				// key transformation (and applying event filters, etc.)
+    				if ($varKey == "dynamicVariablePrefix") {
+    					$varKey = "D";
+    				} else if ($varKey == "visitorID") {
+    					$varKey = "vid";
+    				} else if ($varKey == "pageURL") {
+    					$varKey = "g";
+    					$varValue = substr($varValue, 0, 255);
+    				} else if ($varKey == "referrer") {
+    					$varKey = "r";
+    					$varValue = substr($varValue, 0, 255);
+    				} else if ($varKey == "vmk" || $varKey == "visitorMigrationKey") {
+    					$varKey = "vmt";
+    				} else if ($varKey == "visitorMigrationServer") {
+    					$varKey = "vmf";
+    					if ($s->ssl && $s->visitorMigrationServerSecure) {
+    						$varValue = "";
+    					}
+    				} else if ($varKey == "visitorMigrationServerSecure") {
+    					$varKey = "vmf";
+    					if (!$s->ssl && $s->visitorMigrationServer) {
+    						$varValue = "";
+    					}
+    				} else if ($varKey == "timestamp") {
+    					$varKey = "ts";
+    				} else if ($varKey == "pageName") {
+    					$varKey = "gn";
+    				} else if ($varKey == "pageType") {
+    					$varKey = "gt";
+    				} else if ($varKey == "products") {
+    					$varKey = "pl";
+    				} else if ($varKey == "purchaseID") {
+    					$varKey = "pi";
+    				} else if ($varKey == "server") {
+    					$varKey = "sv";
+    				} else if ($varKey == "charSet") {
+    					$varKey = "ce";
+    				} else if ($varKey == "visitorNamespace") {
+    					$varKey = "ns";
+    				} else if ($varKey == "cookieDomainPeriods") {
+    					$varKey = "cdp";
+    				} else if ($varKey == "cookieLifetime") {
+    					if ($ignoreCookieLifetime) {	// ignore cookie lifetime when overridden above
+    						continue;
+    					}
+    					$varKey = "cl";
+    				} else if ($varKey == "currencyCode") {
+    					$varKey = "cc";
+    				} else if ($varKey == "channel") {
+    					$varKey = "ch";
+    				} else if ($varKey == "transactionID") {
+    					$varKey = "xact";
+    				} else if ($varKey == "campaign") {
+    					$varKey = "v0";
+    				} else if ($varKey == "events") {
+    					$varKey = "ev";
+    					
+    					// filter events if needed
+    					if ($s->isSetString($eventFilter)) {
+    						$varValueParts = explode(',', $varValue);
+    						$validEvents = '';
+    						foreach ($varValueParts as $varValuePart) {
+    							if (strpos($eventFilter, ",$varValuePart,") !== false) {
+    								$validEvents .= ($s->isSetString($validEvents) ? ',' : '') . $varValuePart;
+    							}
+    						}
+    						$varValue = $validEvents;
+    					}
+    				} else if ($s->isNumber($varSuffix)) {
+    					if ($varPrefix == "prop") {
+    						$varKey = "c$varSuffix";
+    					} else if ($varPrefix == "eVar") {
+    						$varKey = "v$varSuffix";
+    					} else if ($varPrefix == "list") {
+    						$varKey = "l$varSuffix";
+    					} else if ($varPrefix == "hier") {
+    						$varKey = "h$varSuffix";
+    						$varValue = substr($varValue, 0, 255);
+    					}
+    				}
 
-				// do not escape pev1/pev2 values because they were already escaped beforehand (this is to only escape if we have to)
-				if ($s->isSetString($varValue)) {
-					$queryString .= '&' . $s->escape($varKey) . '=' . (substr($varKey, 0, 3) == 'pev' ? $varValue : $s->escape($varValue));
-				}
-			}
-		}
-
+    				// do not escape pev1/pev2 values because they were already escaped beforehand (this is to only escape if we have to)
+    				if ($s->isSetString($varValue)) {
+    					$queryString .= '&' . $s->escape($varKey) . '=' . (substr($varKey, 0, 3) == 'pev' ? $varValue : $s->escape($varValue));
+    				}
+    			}
+    		}
+        //fixes
+        }
+        //fixes
 		return $queryString;
 	}
 
@@ -1095,7 +1105,10 @@ class OmnitureMeasurement
 	private function getDefaultPageURL()
 	{
 		if ($_SERVER['REQUEST_URI']) {
-			return ($_SERVER['HTTPS'] ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+			//fixes
+            return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+            //fixes
+            //return ($_SERVER['HTTPS'] ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 		} else {
 			return '';
 		}
@@ -1122,7 +1135,7 @@ class OmnitureMeasurement
 		$xff_ips = array();
 	
 		$headers = $s->getHTTPHeaders();	
-		if ($headers['X-Forwarded-For']) {
+		if (isset($headers['X-Forwarded-For']) && $headers['X-Forwarded-For']) {
 			$xff_ips[] = $headers['X-Forwarded-For'];
 		}
 		
