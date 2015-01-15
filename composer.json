@@ -4,7 +4,7 @@
     "description": "omniture Libraries",
     "keywords": ["Adobe", "Omniture", "Omniture libraries"],
     "time":"2015-01-14",
-    "version":"1.0.1",
+    "version":"1.0.2",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "repositories": [
